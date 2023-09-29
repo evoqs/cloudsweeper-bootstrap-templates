@@ -1,0 +1,87 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Resources": {
+    "ReadOnlyPolicy": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": "*",
+              "Resource": "*"
+            }
+          ]
+        },
+        "Description": "Policy granting read-only access to all resources"
+      }
+    },
+    "ReadOnlyRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "iam.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::GetAtt": ["ReadOnlyPolicy", "Arn"]
+          }
+        ]
+      }
+    },
+    "ReadOnlyUser": {
+      "Type": "AWS::IAM::User",
+      "Properties": {
+        "UserName": "cloudSweeperReadonlyuser"
+      }
+    },
+    "UserToRoleAttachment": {
+      "Type": "AWS::IAM::UserToPolicyAttachment",
+      "Properties": {
+        "PolicyArn": {
+          "Fn::GetAtt": ["ReadOnlyPolicy", "Arn"]
+        },
+        "Users": [
+          {
+            "Ref": "ReadOnlyUser"
+          }
+        ]
+      }
+    }
+  },
+  "Outputs": {
+    "AccessKeyId": {
+      "Description": "Access Key ID for the cloudSweeperReadonlyuser",
+      "Value": {
+        "Fn::GetAtt": ["ReadOnlyUser", "AccessKeyId"]
+      },
+      "Export": {
+        "Name": {
+          "Fn::Sub": "${AWS::StackName}-AccessKeyId"
+        }
+      }
+    },
+    "SecretAccessKey": {
+      "Description": "Secret Access Key for the cloudSweeperReadonlyuser",
+      "Value": {
+        "Fn::GetAtt": ["ReadOnlyUser", "SecretAccessKey"]
+      },
+      "Export": {
+        "Name": {
+          "Fn::Sub": "${AWS::StackName}-SecretAccessKey"
+        }
+      }
+    }
+  }
+}
+
