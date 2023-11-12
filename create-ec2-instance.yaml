@@ -1,0 +1,16 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  MyInstance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      ImageId: 'ami-0fc5d935ebf8bc3bc'  # Replace with the AMI ID for Ubuntu 22.04 in us-east-1
+      InstanceType: 't2.micro'  # You can change the instance type as needed
+      KeyName: 'default'  # Replace with your key pair name
+      SecurityGroupIds:
+        - 'sg-0ffc1dd23b5f839ad'  # Replace with your security group ID
+
+Outputs:
+  PublicIP:
+    Description: 'Public IP Address of the EC2 instance'
+    Value: !GetAtt MyInstance.PublicIp
+
